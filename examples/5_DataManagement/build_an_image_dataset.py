@@ -190,7 +190,8 @@ with tf.Session() as sess:
     sess.run(init)
 
     # Start the data queue
-    tf.train.start_queue_runners()
+    coord = tf.train.Coordinator()
+    threads=tf.train.start_queue_runners(sess=sess, coord=coord)
 
     # Training cycle
     for step in range(1, num_steps+1):
@@ -204,6 +205,9 @@ with tf.Session() as sess:
         else:
             # Only run the optimization op (backprop)
             sess.run(train_op)
+    
+    coord.request_stop()
+    coord.join(threads)
 
     print("Optimization Finished!")
 
